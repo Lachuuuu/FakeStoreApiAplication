@@ -18,6 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ApiClient {
 
+   private final HttpClient httpClient = createHttpClient();
+
    private final ObjectMapper objectMapper = new ObjectMapper()
          .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
          .findAndRegisterModules();
@@ -38,32 +40,31 @@ public class ApiClient {
             .build();
    }
 
-   public void getUsersData() throws IOException, InterruptedException {
-      HttpClient httpClient = createHttpClient();
-      HttpResponse<String> response = httpClient.send(
-            createHttpRequest("https://fakestoreapi.com/users"),
+   private HttpResponse<String> sendRequest(String uri) throws IOException, InterruptedException {
+      return httpClient.send(
+            createHttpRequest(uri),
             HttpResponse.BodyHandlers.ofString()
       );
+   }
 
-      HttpResponse<String> responseCarts = httpClient.send(
-            createHttpRequest("https://fakestoreapi.com/carts"),
-            HttpResponse.BodyHandlers.ofString()
-      );
+   public List<User> getUsersData() throws IOException, InterruptedException {
+      HttpResponse<String> response = sendRequest("https://fakestoreapi.com/users");
+      String responseJSON = response.body();
 
-      HttpResponse<String> responseProducts = httpClient.send(
-            createHttpRequest("https://fakestoreapi.com/products"),
-            HttpResponse.BodyHandlers.ofString()
-      );
+      return List.of(objectMapper.readValue(responseJSON, User[].class));
+   }
 
-      String responseUsersJson = response.body();
-      String responseCartsJson = responseCarts.body();
-      String responseProductsJson = responseProducts.body();
+   public List<Cart> getCartsData() throws IOException, InterruptedException {
+      HttpResponse<String> response = sendRequest("https://fakestoreapi.com/carts");
 
-      List<User> users = List.of(objectMapper.readValue(responseUsersJson, User[].class));
-      List<Cart> carts = List.of(objectMapper.readValue(responseCartsJson, Cart[].class));
-      List<Product> products = List.of(objectMapper.readValue(responseProductsJson, Product[].class));
+      String responseJSON = response.body();
+      return List.of(objectMapper.readValue(responseJSON, Cart[].class));
+   }
 
-      System.out.println(users);
+   public List<Product> getProductsData() throws IOException, InterruptedException {
+      HttpResponse<String> response = sendRequest("https://fakestoreapi.com/products");
 
+      String responseJSON = response.body();
+      return List.of(objectMapper.readValue(responseJSON, Product[].class));
    }
 }
