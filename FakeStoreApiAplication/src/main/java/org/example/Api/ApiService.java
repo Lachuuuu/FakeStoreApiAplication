@@ -48,7 +48,7 @@ public class ApiService {
          Cart finalHighestValueCart = highestValueCart;
          highestValueCartOwner = users.stream().filter(user -> user.getId().equals(finalHighestValueCart.getUserId())).findFirst();
       }
-      return "highest cart value = " +
+      return "Highest cart value = " +
             highestCartValue +
             " | owned by = " +
             (highestValueCartOwner.isPresent() ? highestValueCartOwner.get().getName().getFirstname() : "") +
