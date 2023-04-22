@@ -14,17 +14,9 @@ public class Main {
       ApiClient apiClient = new ApiClient();
       ApiService apiService = new ApiService();
 
-      List<User> users = null;
-      List<Cart> carts = null;
-      List<Product> products = null;
-
-      try {
-         users = apiClient.getUsersData();
-         carts = apiClient.getCartsData();
-         products = apiClient.getProductsData();
-      } catch (Exception e) {
-         System.out.println(e);
-      }
+      List<User> users = apiClient.getUsersData();
+      List<Cart> carts = apiClient.getCartsData();
+      List<Product> products = apiClient.getProductsData();
 
       Map<String, Double> categoriesValues = apiService.createCategoriesValues(products);
 
