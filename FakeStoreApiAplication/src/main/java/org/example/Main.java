@@ -17,6 +17,7 @@ public class Main {
       List<User> users = null;
       List<Cart> carts = null;
       List<Product> products = null;
+
       try {
          users = apiClient.getUsersData();
          carts = apiClient.getCartsData();
@@ -24,14 +25,11 @@ public class Main {
       } catch (Exception e) {
          System.out.println(e);
       }
-      System.out.println(users);
-      System.out.println(carts);
-      System.out.println(products);
 
       Map<String, Double> categoriesValues = apiService.createCategoriesValues(products);
 
       System.out.println(categoriesValues);
-      apiService.findCartWithHighestValueAndItsOwner(carts, products, users);
-      apiService.findTwoUsersLivingFurthestAway(users);
+      System.out.println(apiService.findCartWithHighestValueAndItsOwner(carts, products, users));
+      System.out.println(apiService.findTwoUsersLivingFurthestAway(users));
    }
 }

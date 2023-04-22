@@ -11,10 +11,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Name {
-   
+
    @JsonProperty("firstname")
    private String firstname;
 
    @JsonProperty("lastname")
    private String lastname;
+
+   @Override
+   public String toString() {
+      return firstname + " " + lastname;
+   }
 }

@@ -14,17 +14,20 @@ import java.util.Optional;
 public class ApiService {
    public Map<String, Double> createCategoriesValues(List<Product> products) {
       Map<String, Double> categoriesValues = new HashMap<>();
-
-      for (Product product : products) {
-         categoriesValues.merge(product.getCategory(), product.getPrice(), Double::sum);
+      if (products != null) for (Product product : products) {
+         if (productPriceAndCategoryIsCorrect(product))
+            categoriesValues.merge(product.getCategory(), product.getPrice(), Double::sum);
       }
-
       return categoriesValues;
    }
 
-   public void findCartWithHighestValueAndItsOwner(List<Cart> carts, List<Product> products, List<User> users) {
+   public String findCartWithHighestValueAndItsOwner(List<Cart> carts, List<Product> products, List<User> users) throws IllegalArgumentException {
+      if (users == null || carts == null || products == null)
+         throw new IllegalArgumentException("ERROR parameters cannot be null");
       double highestCartValue = -1D;
       Cart highestValueCart = null;
+      Optional<User> highestValueCartOwner = Optional.empty();
+
       for (Cart cart : carts) {
          double currentCartValue = cart.getProducts()
                .stream()
@@ -43,26 +46,29 @@ public class ApiService {
 
       if (highestValueCart != null) {
          Cart finalHighestValueCart = highestValueCart;
-         Optional<User> highestValueCartOwner = users.stream().filter(user -> user.getId().equals(finalHighestValueCart.getUserId())).findFirst();
-         System.out.println(
-               "najwieksze value carta = " +
-                     highestCartValue +
-                     " wlascicielem jest " +
-                     highestValueCartOwner.get().getName().getFirstname() +
-                     " " +
-                     highestValueCartOwner.get().getName().getLastname()
-         );
+         highestValueCartOwner = users.stream().filter(user -> user.getId().equals(finalHighestValueCart.getUserId())).findFirst();
       }
+      return "highest cart value = " +
+            highestCartValue +
+            " | owned by = " +
+            (highestValueCartOwner.isPresent() ? highestValueCartOwner.get().getName().getFirstname() : "") +
+            " " +
+            (highestValueCartOwner.isPresent() ? highestValueCartOwner.get().getName().getLastname() : "");
    }
 
-   public void findTwoUsersLivingFurthestAway(List<User> users) {
-      double maxDistance = 0D;
+   public String findTwoUsersLivingFurthestAway(List<User> users) throws IllegalArgumentException {
+      if (users == null || users.size() < 2)
+         throw new IllegalArgumentException("ERROR: list of users should contains at least 2 users");
+
+      double maxDistance = -1D;
       User maxDistanceUser1 = null;
       User maxDistanceUser2 = null;
       for (User user1 : users) {
          double distance;
+         if (!userAddressIsCorrect(user1)) continue;
          for (User user2 : users) {
             if (!user1.equals(user2)) {
+               if (!userAddressIsCorrect(user2)) continue;
                distance = calculateDistance(
                      user1.getAddress().getGeolocation().getLat(),
                      user1.getAddress().getGeolocation().getLon(),
@@ -79,15 +85,31 @@ public class ApiService {
          }
       }
 
-      System.out.println("___________________");
-      System.out.println(maxDistance);
-      System.out.println(maxDistanceUser1.getName().getFirstname() + " " + maxDistanceUser1.getName().getLastname());
-      System.out.println(maxDistanceUser1.getAddress().getGeolocation().getLat());
-      System.out.println(maxDistanceUser1.getAddress().getGeolocation().getLon());
-      System.out.println(maxDistanceUser2.getName().getFirstname() + " " + maxDistanceUser2.getName().getLastname());
-      System.out.println(maxDistanceUser2.getAddress().getGeolocation().getLat());
-      System.out.println(maxDistanceUser2.getAddress().getGeolocation().getLon());
+      return "Users that lives furthest away are: " +
+            maxDistanceUser1 +
+            " and " +
+            maxDistanceUser2 +
+            " distance between these 2 users = "
+            + String.format("%.2f", maxDistance) + " km";
+//            + " lat1=" + maxDistanceUser1.getAddress().getGeolocation().getLat()
+//            + " lon1=" + maxDistanceUser1.getAddress().getGeolocation().getLon()
+//            + " lat2=" + maxDistanceUser2.getAddress().getGeolocation().getLat()
+//            + " lon2=" + maxDistanceUser2.getAddress().getGeolocation().getLon();
+   }
 
+   private boolean userAddressIsCorrect(User user) {
+      return (user.getAddress() != null &&
+            user.getAddress().getGeolocation() != null &&
+            user.getAddress().getGeolocation().getLat() != null &&
+            user.getAddress().getGeolocation().getLon() != null
+      );
+   }
+
+   private boolean productPriceAndCategoryIsCorrect(Product product) {
+      return (product != null &&
+            product.getPrice() != null &&
+            product.getCategory() != null
+      );
    }
 
    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -104,8 +126,5 @@ public class ApiService {
       double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       return R * c;
    }
-
-
-   //acos(sin(lat1)*sin(lat2)+cos(lat1)*cos(lat2)*cos(lon2-lon1))*6371
 
 }

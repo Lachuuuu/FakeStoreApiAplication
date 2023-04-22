@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User {
-   
+
    @JsonProperty("id")
    private Long id;
 
@@ -36,5 +36,11 @@ public class User {
    @JsonProperty("__v")
    private String v;
 
-
+   @Override
+   public String toString() {
+      return "User{" +
+            "id=" + id +
+            ", name=" + name +
+            '}';
+   }
 }
