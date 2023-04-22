@@ -265,7 +265,7 @@ public class ApiServiceTest {
       Cart cart3 = new Cart(2L, 1L, LocalDateTime.now(), List.of(cartProduct1, cartProduct3), null);
 
       //Then
-      assertEquals("highest cart value = " +
+      assertEquals("Highest cart value = " +
                   60.0 +
                   " | owned by = Marcin" +
                   " Kowalski",
@@ -301,7 +301,7 @@ public class ApiServiceTest {
       Cart cart3 = new Cart(2L, 1L, LocalDateTime.now(), List.of(cartProduct1, cartProduct3), null);
 
       //Then
-      assertEquals("highest cart value = " +
+      assertEquals("Highest cart value = " +
                   12.65 +
                   " | owned by = Marcin" +
                   " Kowalski",
