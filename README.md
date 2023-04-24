@@ -1,7 +1,7 @@
 # FakeStoreApiAplication TASK 2  
   
 # Overview
-This repository contains the solution to Task 2 of the recruitment process  
+This repository contains the solution to Task 2
 
 # Used Technologies  
 - Lombok  
