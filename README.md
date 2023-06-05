@@ -1,7 +1,4 @@
-# FakeStoreApiAplication TASK 2  
-  
-# Overview
-This repository contains the solution to Task 2
+# FakeStoreApiAplication  
 
 # Used Technologies  
 - Lombok  
